@@ -1,21 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Naik Token ($NAIK)</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naik Token | Connect Wallet</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script src="js/web3.js" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      color: #22d3ee;
+    }
+    button {
+      background: #22d3ee;
+      color: #0f172a;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #67e8f9;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>🚀 Naik Token ($NAIK)</h1>
-    <p>The community-driven store of value</p>
-  </header>
+  <h1>🪙 Naik Token</h1>
+  <p>Connect your wallet to explore $NAIK on BSC</p>
+  <button id="connectButton">Connect Wallet</button>
 
-  <main>
-    <button id="connectButton">Connect Wallet</button>
-  </main>
-
-  <script src="js/web3.js"></script>
+  <div class="info">
+    <p><strong>Address:</strong> <span id="walletAddress">Not connected</span></p>
+    <p><strong>BNB Balance:</strong> <span id="ethBalance">0</span></p>
+    <p><strong>$NAIK Balance:</strong> <span id="naikBalance">0</span></p>
+  </div>
 </body>
 </html>
