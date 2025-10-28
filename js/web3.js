@@ -1,4 +1,4 @@
-// 🦊 Naik Token - MetaMask Connect Script (Stable Version)
+// 🦊 Naik Token - MetaMask Connect Script (Final Version)
 
 const connectButton = document.getElementById("connectButton");
 const walletAddressSpan = document.getElementById("walletAddress");
@@ -34,7 +34,6 @@ async function connectWallet() {
   }
 
   provider = new ethers.providers.Web3Provider(window.ethereum);
-
   const bscChainId = "0x38"; // BSC Mainnet
 
   try {
@@ -48,7 +47,6 @@ async function connectWallet() {
         });
       } catch (switchError) {
         if (switchError.code === 4902) {
-          // Chain belum ada di MetaMask
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
@@ -70,12 +68,16 @@ async function connectWallet() {
       }
     }
 
-    // Minta akses wallet
-    await provider.send("eth_requestAccounts", []);
+    try {
+      await provider.send("eth_requestAccounts", []);
+    } catch (err) {
+      alert("Koneksi ditolak. Silakan coba lagi dan izinkan akses wallet.");
+      return;
+    }
+
     signer = provider.getSigner();
     const address = await signer.getAddress();
 
-    // Update UI
     connectButton.innerText = "Connected";
     walletAddressSpan.innerText = address;
 
@@ -87,7 +89,7 @@ async function connectWallet() {
     // await getNaikBalance(address);
 
   } catch (err) {
-    console.error("❌ Error:", err);
+    console.error("❌ Error connecting wallet:", err);
     alert("Gagal connect wallet. Coba refresh atau cek MetaMask.");
   }
 }
