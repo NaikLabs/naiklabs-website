@@ -1,4 +1,4 @@
-// 🦊 Naik Token - BSC MetaMask Connect Script
+// 🦊 Naik Token - MetaMask Connect Script (Stable Version)
 
 const connectButton = document.getElementById("connectButton");
 const walletAddressSpan = document.getElementById("walletAddress");
@@ -28,39 +28,66 @@ let provider;
 let signer;
 
 async function connectWallet() {
+  if (typeof window.ethereum === "undefined") {
+    alert("MetaMask belum terpasang. Silakan install dulu.");
+    return;
+  }
+
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+
+  const bscChainId = "0x38"; // BSC Mainnet
+
   try {
-    if (typeof window.ethereum !== "undefined") {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
+    const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
 
-      const bscChainId = "0x38"; // BSC Mainnet
-      const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
-
-      if (currentChainId !== bscChainId) {
+    if (currentChainId !== bscChainId) {
+      try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: bscChainId }],
         });
-        console.log("✅ Switched to BSC Mainnet");
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          // Chain belum ada di MetaMask
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: bscChainId,
+              chainName: "Binance Smart Chain",
+              rpcUrls: ["https://bsc-dataseed.binance.org/"],
+              nativeCurrency: {
+                name: "BNB",
+                symbol: "BNB",
+                decimals: 18
+              },
+              blockExplorerUrls: ["https://bscscan.com"]
+            }]
+          });
+        } else {
+          alert("Gagal switch ke BSC. Coba manual di MetaMask.");
+          return;
+        }
       }
-
-      await provider.send("eth_requestAccounts", []);
-      signer = provider.getSigner();
-      const address = await signer.getAddress();
-
-      connectButton.innerText = "Connected";
-      walletAddressSpan.innerText = address;
-
-      const balance = await provider.getBalance(address);
-      const bnbBalance = ethers.utils.formatEther(balance);
-      ethBalanceSpan.innerText = `${parseFloat(bnbBalance).toFixed(4)} BNB`;
-
-      // Aktifkan ini setelah kontrak NAIK deploy
-      // await getNaikBalance(address);
-    } else {
-      alert("MetaMask belum terpasang, pasang dulu ya biar bisa connect!");
     }
+
+    // Minta akses wallet
+    await provider.send("eth_requestAccounts", []);
+    signer = provider.getSigner();
+    const address = await signer.getAddress();
+
+    // Update UI
+    connectButton.innerText = "Connected";
+    walletAddressSpan.innerText = address;
+
+    const balance = await provider.getBalance(address);
+    const bnbBalance = ethers.utils.formatEther(balance);
+    ethBalanceSpan.innerText = `${parseFloat(bnbBalance).toFixed(4)} BNB`;
+
+    // Aktifkan kalau kontrak NAIK udah deploy
+    // await getNaikBalance(address);
+
   } catch (err) {
-    console.error("❌ Error connecting wallet:", err);
+    console.error("❌ Error:", err);
     alert("Gagal connect wallet. Coba refresh atau cek MetaMask.");
   }
 }
