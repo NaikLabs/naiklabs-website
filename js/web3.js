@@ -1,4 +1,4 @@
-// 🦊 Naik Token - MetaMask Connect Script (Final Version)
+// 🦊 Naik Token - MetaMask Connect Script (Final & Stable)
 
 const connectButton = document.getElementById("connectButton");
 const walletAddressSpan = document.getElementById("walletAddress");
@@ -103,6 +103,11 @@ async function getNaikBalance(address) {
     naikBalanceSpan.innerText = `${formatted.toFixed(2)} $NAIK`;
   } catch (err) {
     console.error("❌ Error fetching NAIK balance:", err);
+    naikBalanceSpan.innerText = "Error";
+  }
+}
+
+connectButton.addEventListener("click", connectWallet);    console.error("❌ Error fetching NAIK balance:", err);
     naikBalanceSpan.innerText = "Error";
   }
 }
