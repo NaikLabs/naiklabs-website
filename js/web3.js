@@ -1,5 +1,7 @@
 // 🦊 Naik Token - MetaMask Connect Script (Final & Stable)
 
+console.log("✅ web.js loaded");
+
 const connectButton = document.getElementById("connectButton");
 const walletAddressSpan = document.getElementById("walletAddress");
 const ethBalanceSpan = document.getElementById("ethBalance");
