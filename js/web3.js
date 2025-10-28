@@ -2,13 +2,14 @@
 
 console.log("✅ web.js loaded");
 
+// 🔗 Ambil elemen HTML
 const connectButton = document.getElementById("connectButton");
 const walletAddressSpan = document.getElementById("walletAddress");
 const ethBalanceSpan = document.getElementById("ethBalance");
 const naikBalanceSpan = document.getElementById("naikBalance");
 
 // 🚧 Ganti ini setelah kontrak NAIK deploy
-const NAIK_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000";
+const NAIK_TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000"; // Ganti dengan alamat kontrak asli
 const NAIK_TOKEN_ABI = [
   {
     constant: true,
@@ -70,13 +71,7 @@ async function connectWallet() {
       }
     }
 
-    try {
-      await provider.send("eth_requestAccounts", []);
-    } catch (err) {
-      alert("Koneksi ditolak. Silakan coba lagi dan izinkan akses wallet.");
-      return;
-    }
-
+    await provider.send("eth_requestAccounts", []);
     signer = provider.getSigner();
     const address = await signer.getAddress();
 
@@ -87,8 +82,8 @@ async function connectWallet() {
     const bnbBalance = ethers.utils.formatEther(balance);
     ethBalanceSpan.innerText = `${parseFloat(bnbBalance).toFixed(4)} BNB`;
 
-    // Aktifkan kalau kontrak NAIK udah deploy
-    // await getNaikBalance(address);
+    // Aktifkan jika kontrak NAIK sudah deploy
+    await getNaikBalance(address);
 
   } catch (err) {
     console.error("❌ Error connecting wallet:", err);
@@ -109,9 +104,12 @@ async function getNaikBalance(address) {
   }
 }
 
-connectButton.addEventListener("click", connectWallet);    console.error("❌ Error fetching NAIK balance:", err);
-    naikBalanceSpan.innerText = "Error";
-  }
-}
-
+// 🔘 Event listener untuk tombol
 connectButton.addEventListener("click", connectWallet);
+
+// 🔄 Reload jika akun berubah
+if (window.ethereum) {
+  window.ethereum.on("accountsChanged", () => {
+    window.location.reload();
+  });
+}
